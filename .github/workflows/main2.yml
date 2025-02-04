@@ -24,7 +24,7 @@ jobs:
         run: pip install requests
 
       - name: Esegui lo script
-        run: python Gen.py
+        run: python Rom.py
 
       - name: Aggiungi tutti i file generati al commit
         run: |
