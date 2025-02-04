@@ -1,0 +1,24 @@
+name: Esegui Gen.py ogni 30 minuti
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Esegue ogni 30 minuti
+  workflow_dispatch:  # Permette di eseguire manualmente
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repository
+        uses: actions/checkout@v4
+
+      - name: Imposta Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Sostituisci con la versione necessaria
+
+      - name: Installa le dipendenze
+        run: pip install requests json
+
+      - name: Esegui lo script
+        run: python Gen.py
