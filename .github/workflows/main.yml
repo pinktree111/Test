@@ -30,10 +30,15 @@ jobs:
           pip install -r requirements.txt || true
 
       - name: Debug - Mostra pacchetti installati
-        run: pip freeze
+        run: pip list
 
       - name: Debug - Test importazione requests
         run: python -c "import requests; print('Modulo requests importato con successo!')"
+
+      - name: Debug - Controlla l'utente e l'ambiente di esecuzione
+        run: |
+          whoami
+          env
 
       - name: Run Gen.py
         run: python Gen.py
