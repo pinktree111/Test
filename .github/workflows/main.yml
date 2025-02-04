@@ -5,6 +5,9 @@ on:
     - cron: '*/30 * * * *'  # Esegue ogni 30 minuti
   workflow_dispatch:  # Permette di eseguire manualmente
 
+permissions:
+  contents: write  # Permette di fare commit e push nel repository
+
 jobs:
   run-script:
     runs-on: ubuntu-latest
