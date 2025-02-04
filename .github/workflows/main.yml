@@ -39,6 +39,7 @@ jobs:
         run: |
           whoami
           env
-
+      - name: Debug - Mostra file nel repository
+        run: ls -R
       - name: Run Gen.py
         run: python Gen.py
