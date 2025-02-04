@@ -1,0 +1,41 @@
+name: Esegui Gen.py ogni 30 minuti
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'  # Usa una versione stabile (3.10 o 3.11)
+
+      - name: Debug - Mostra struttura file
+        run: ls -R
+
+      - name: Debug - Mostra versione Python e pip
+        run: |
+          python --version
+          pip --version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r Test/requirements.txt
+
+      - name: Debug - Mostra pacchetti installati
+        run: pip list
+
+      - name: Debug - Test importazione requests
+        run: python -c "import requests; print('Modulo requests importato con successo!')"
+
+      - name: Esegui Gen.py
+        run: python Test/Gen.py
