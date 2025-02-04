@@ -1,0 +1,37 @@
+name: Esegui Gen.py ogni 30 minuti
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Esegue ogni 30 minuti
+  workflow_dispatch:  # Permette di eseguire manualmente
+
+permissions:
+  contents: write  # Permette di fare commit e push nel repository
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repository
+        uses: actions/checkout@v4
+
+      - name: Imposta Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Sostituisci con la versione necessaria
+
+      - name: Installa le dipendenze
+        run: pip install requests
+
+      - name: Esegui lo script
+        run: python Gen.py
+
+      - name: Aggiungi tutti i file generati al commit
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add channels_*_useragent.m3u8  # Aggiunge tutti i file generati
+          git commit -m "Aggiornamento file M3U8 - $(date +'%Y-%m-%d %H:%M:%S')" || echo "Nessuna modifica da committare"
+
+      - name: Pusha i cambiamenti
+        run: git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }} || echo "Nessuna modifica da pushare"
