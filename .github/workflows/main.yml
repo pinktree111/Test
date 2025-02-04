@@ -2,8 +2,8 @@ name: Esegui Gen.py ogni 30 minuti
 
 on:
   schedule:
-    - cron: "*/30 * * * *"  # Esegue ogni 30 minuti
-  workflow_dispatch:  # Aggiunge un pulsante per eseguirlo manualmente
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
 
 jobs:
   run-script:
@@ -16,10 +16,27 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Cambia se hai bisogno di una versione specifica
+          python-version: '3.x'
+
+      - name: Debug - Mostra contenuto repository
+        run: ls -R
+
+      - name: Debug - Versione di Python e pip
+        run: |
+          python --version
+          pip --version
 
       - name: Install dependencies
-        run: pip install -r requirements.txt || true
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+          pip install json
+          pip install -r requirements.txt || true
+          pip freeze
+
+      - name: Debug - Verifica installazione requests e json
+        run: |
+          python -c "import requests, json; print('Requests e JSON importati correttamente')"
 
       - name: Run Gen.py
         run: python Gen.py
