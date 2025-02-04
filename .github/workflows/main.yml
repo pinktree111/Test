@@ -13,15 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python (Usa una versione stabile)
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.11'  # Usa una versione stabile, 3.10 o 3.11
 
-      - name: Debug - Mostra contenuto repository
-        run: ls -R
-
-      - name: Debug - Versione di Python e pip
+      - name: Debug - Mostra versione Python e pip
         run: |
           python --version
           pip --version
@@ -29,14 +26,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
-          pip install json
+          pip install --no-cache-dir requests
           pip install -r requirements.txt || true
-          pip freeze
 
-      - name: Debug - Verifica installazione requests e json
-        run: |
-          python -c "import requests, json; print('Requests e JSON importati correttamente')"
+      - name: Debug - Mostra pacchetti installati
+        run: pip freeze
+
+      - name: Debug - Test importazione requests
+        run: python -c "import requests; print('Modulo requests importato con successo!')"
 
       - name: Run Gen.py
         run: python Gen.py
