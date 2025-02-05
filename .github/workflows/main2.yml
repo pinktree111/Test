@@ -1,4 +1,4 @@
-name: Esegui Gen.py ogni 30 minuti
+name: Esegui Rm.py ogni 30 minuti
 
 on:
   schedule:
@@ -24,13 +24,13 @@ jobs:
         run: pip install requests
 
       - name: Esegui lo script
-        run: python Rm.py
+        run: python Rm.py  # Ora il nome è corretto
 
       - name: Aggiungi tutti i file generati al commit
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add channels_*_useragent.m3u8  # Aggiunge tutti i file generati
+          git add channels_*.m3u8  # Aggiunge tutti i file generati (HTTP e HTTPS)
           git commit -m "Aggiornamento file M3U8 - $(date +'%Y-%m-%d %H:%M:%S')" || echo "Nessuna modifica da committare"
 
       - name: Pusha i cambiamenti
