@@ -39,8 +39,12 @@ def fetch_channels(base_url):
         return []
 
 def filter_italian_channels(channels, base_url):
-    """Filtra i canali con country Italy e genera il link m3u8 con il nome del canale."""
-    return [(ch["name"], f"{base_url}/play/{ch['id']}/index.m3u8", base_url) for ch in channels if ch.get("country") == "Italy"]
+    """Filtra i canali con country Italy e genera sia i link HTTP che HTTPS."""
+    return [(ch["name"], 
+             f"{base_url}/play/{ch['id']}/index.m3u8",   # Versione HTTPS
+             f"{base_url}/play/{ch['id']}/index.m3u8".replace("https://", "http://"),   # Versione HTTP
+             base_url) 
+            for ch in channels if ch.get("country") == "Italy"]
 
 def classify_channel(name):
     """Classifica il canale per servizio e categoria tematica."""
@@ -70,33 +74,37 @@ def organize_channels(channels):
     """Organizza i canali per servizio e categoria."""
     organized_data = {service: {category: [] for category in CATEGORY_KEYWORDS.keys()} for service in SERVICE_KEYWORDS.keys()}
     
-    for name, url, base_url in channels:
+    for name, url_https, url_http, base_url in channels:
         service, category = classify_channel(name)
-        user_agent = extract_user_agent(base_url)  # Ottiene il nome del sito senza estensione
-        organized_data[service][category].append((name, url, base_url, user_agent))
+        user_agent = extract_user_agent(base_url)
+        organized_data[service][category].append((name, url_https, url_http, base_url, user_agent))
 
     return organized_data
 
 def save_m3u8(organized_channels, site_name):
-    """Salva i canali in un file M3U8 per ogni sito con il referrer e user agent corretti."""
-    output_file = f"channels_{site_name}_useragent.m3u8"
+    """Salva i canali in due file M3U8 (uno HTTP e uno HTTPS) per ogni sito."""
     
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write("#EXTM3U\n\n")
+    output_file_https = f"channels_{site_name}_https.m3u8"
+    output_file_http = f"channels_{site_name}_http.m3u8"
 
-        for service, categories in organized_channels.items():
-            f.write(f"#EXTINF:-1, ===== {service.upper()} =====\n\n")
-            for category, channels in categories.items():
-                if channels:
-                    f.write(f"#EXTINF:-1, --- {category} ---\n\n")
-                    for name, url, base_url, user_agent in channels:
-                        f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{name}" group-title="{category}" http-user-agent="{user_agent}" http-referrer="{base_url}",{name}\n')
-                        f.write(f"#EXTVLCOPT:http-user-agent={user_agent}\n")
-                        f.write(f"#EXTVLCOPT:http-referrer={base_url}\n")
-                        f.write(f'#EXTHTTP:{{"User-Agent":"{user_agent}","Referer":"{base_url}"}}\n')
-                        f.write(f"{url}\n\n")
+    for protocol, output_file in [("https", output_file_https), ("http", output_file_http)]:
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write("#EXTM3U\n\n")
 
-    print(f"File {output_file} creato con successo!")
+            for service, categories in organized_channels.items():
+                f.write(f"#EXTINF:-1, ===== {service.upper()} =====\n\n")
+                for category, channels in categories.items():
+                    if channels:
+                        f.write(f"#EXTINF:-1, --- {category} ---\n\n")
+                        for name, url_https, url_http, base_url, user_agent in channels:
+                            url = url_https if protocol == "https" else url_http
+                            f.write(f'#EXTINF:-1 tvg-id="" tvg-name="{name}" group-title="{category}" http-user-agent="{user_agent}" http-referrer="{base_url}",{name}\n')
+                            f.write(f"#EXTVLCOPT:http-user-agent={user_agent}\n")
+                            f.write(f"#EXTVLCOPT:http-referrer={base_url}\n")
+                            f.write(f'#EXTHTTP:{{"User-Agent":"{user_agent}","Referer":"{base_url}"}}\n')
+                            f.write(f"{url}\n\n")
+
+        print(f"File {output_file} creato con successo!")
 
 def main():
     for url in BASE_URLS:
