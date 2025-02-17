@@ -7,7 +7,7 @@ app = Flask(__name__)
 # URL del JSON da cui scaricare i dati
 JSON_URL = "https://vavoo.to/channels"
 
-# Template HTML aggiornato con icona di copia link
+# Template HTML aggiornato per la copia negli appunti
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="it">
@@ -71,6 +71,17 @@ HTML_TEMPLATE = """
         .copy-icon:hover {
             color: #333;
         }
+        .copy-msg {
+            position: absolute;
+            bottom: 40px;
+            left: 10px;
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+        }
         @media (min-width: 600px) {
             .grid-item {
                 width: calc(33.33% - 10px);
@@ -91,12 +102,30 @@ HTML_TEMPLATE = """
             });
         }
 
-        function copyToClipboard(link) {
-            navigator.clipboard.writeText(link).then(function() {
-                alert("Link copiato: " + link);
-            }).catch(function(err) {
-                alert("Errore nel copiare il link: " + err);
-            });
+        function copyToClipboard(link, msgElement) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(link).then(function() {
+                    showCopyMessage(msgElement);
+                }).catch(function(err) {
+                    console.error("Errore: ", err);
+                });
+            } else {
+                // Fallback per browser più vecchi
+                var tempInput = document.createElement("input");
+                tempInput.value = link;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                showCopyMessage(msgElement);
+            }
+        }
+
+        function showCopyMessage(msgElement) {
+            msgElement.style.display = "block";
+            setTimeout(function() {
+                msgElement.style.display = "none";
+            }, 2000);
         }
     </script>
 </head>
@@ -107,7 +136,8 @@ HTML_TEMPLATE = """
         {% for name, link in channels %}
         <div class="grid-item">
             <a href="{{ link }}" target="_blank">{{ name }}</a>
-            <span class="copy-icon" onclick="copyToClipboard('{{ link }}')">📋</span>
+            <span class="copy-icon" onclick="copyToClipboard('{{ link }}', this.nextElementSibling)">📋</span>
+            <div class="copy-msg">Copiato!</div>
         </div>
         {% endfor %}
     </div>
