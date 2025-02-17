@@ -115,10 +115,12 @@ HTML_TEMPLATE = """
       <!-- Nome del canale cliccabile (apre il link originale) -->
       <a href="{{ link }}" target="_blank" class="channel-name">{{ name }}</a>
       <div class="icons">
-        <!-- Icona VLC: il link sostituisce il prefisso https:// con vlc:// -->
-        <a href="vlc://{{ link | replace('https://', '') }}" title="Apri con VLC">VLC</a>
-        <!-- Icona MPV: il link sostituisce il prefisso https:// con mpv:// -->
-        <a href="mpv://{{ link | replace('https://', '') }}" title="Apri con MPV">MPV</a>
+        <!-- Icona ▶️ guarda qui: il link sostituisce il prefisso https:// con vlc:// o mpv:// -->
+        <span onclick="window.location.href='intent://{{ link | replace('https://', '') }}#Intent;package=com.javideoplayer.mpv;end;'">▶️ guarda qui</span>
+        <!-- Icona 🚧 VLC: il link sostituisce il prefisso https:// con vlc:// -->
+        <span onclick="window.location.href='vlc://{{ link | replace('https://', '') }}'" title="Apri con VLC">🚧 VLC</span>
+        <!-- Icona 🎦 MPV: il link sostituisce il prefisso https:// con mpv:// -->
+        <span onclick="window.location.href='mpv://{{ link | replace('https://', '') }}'" title="Apri con MPV">🎦 MPV</span>
         <!-- Icona copia: esegue la copia tramite JavaScript -->
         <span onclick="copyToClipboard('{{ link }}', this.nextElementSibling)" title="Copia link">📋</span>
         <span class="copy-msg">Copiato!</span>
