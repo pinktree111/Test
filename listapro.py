@@ -1,13 +1,10 @@
 from flask import Flask, render_template_string
 import requests
-import json
 
 app = Flask(__name__)
 
-# URL del JSON da cui scaricare i dati
 JSON_URL = "https://vavoo.to/channels"
 
-# Template HTML con una lista di canali
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="it">
@@ -56,7 +53,7 @@ HTML_TEMPLATE = """
     }
     .icons a, .icons span {
       margin-right: 15px;
-      font-size: 16px;
+      font-size: 20px;
       text-decoration: none;
       cursor: pointer;
       color: #555;
@@ -115,14 +112,12 @@ HTML_TEMPLATE = """
       <!-- Nome del canale cliccabile (apre il link originale) -->
       <a href="{{ link }}" target="_blank" class="channel-name">{{ name }}</a>
       <div class="icons">
-        <!-- Icona ▶️ guarda qui: apre direttamente il link nel browser -->
-        <span onclick="window.location.href='{{ link }}'" title="Guarda direttamente">▶️ guarda qui</span>
-        <!-- Icona 🚧 VLC: il link sostituisce il prefisso https:// con vlc:// -->
-        <span onclick="window.location.href='vlc://{{ link | replace('https://', '') }}'" title="Apri con VLC">🚧 VLC</span>
-        <!-- Icona 🎦 MPV: il link sostituisce il prefisso https:// con mpv:// -->
-        <span onclick="window.location.href='mpv://{{ link | replace('https://', '') }}'" title="Apri con MPV">🎦 MPV</span>
-        <!-- Icona copia: esegue la copia tramite JavaScript -->
-        <span onclick="copyToClipboard('{{ link }}', this.nextElementSibling)" title="Copia link">📋</span>
+        <!-- ▶️ Apre direttamente il link nel browser -->
+        <a href="{{ link }}" target="_blank" title="Guarda qui">▶️</a>
+        <!-- 🎥 Apre con VLC usando il deeplink vlc:// -->
+        <a href="vlc://{{ link | replace('https://', '') }}" title="Apri con VLC">🎥</a>
+        <!-- 🖨️ Copia il link negli appunti -->
+        <span onclick="copyToClipboard('{{ link }}', this.nextElementSibling)" title="Copia link">🖨️</span>
         <span class="copy-msg">Copiato!</span>
       </div>
     </li>
@@ -147,7 +142,6 @@ def get_italy_channels():
             name = item.get("name", "Sconosciuto")
             id_value = item.get("id")
             if id_value:
-                # Costruisco il link originale
                 link = f"https://vavoo.to/play/{id_value}/index.m3u8"
                 channels.append((name, link))
     return channels
