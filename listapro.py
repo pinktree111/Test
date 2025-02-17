@@ -1,10 +1,13 @@
 from flask import Flask, render_template_string, Response
 import requests
+import json
 
 app = Flask(__name__)
 
+# URL del JSON da cui scaricare i dati
 JSON_URL = "https://vavoo.to/channels"
 
+# Template HTML aggiornato
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="it">
@@ -34,22 +37,25 @@ HTML_TEMPLATE = """
       margin-right: auto;
     }
     .toggle-note {
-      text-align: center;
       display: block;
-      margin-top: 20px;
-      font-size: 14px;
-      color: #D9534F;
-      cursor: pointer;
+      width: 140px;
+      margin: 15px auto 30px;
+      padding: 8px;
+      text-align: center;
+      background-color: #dc3545;
+      color: white;
       text-decoration: none;
+      border-radius: 5px;
       font-weight: bold;
+      font-size: 16px;
     }
     .toggle-note:hover {
-      opacity: 0.8;
+      background-color: #c82333;
     }
     .download-button {
       display: block;
       width: 100px;
-      margin: 0 auto 30px;
+      margin: 0 auto 20px;
       padding: 8px;
       text-align: center;
       background-color: #28a745;
@@ -216,7 +222,8 @@ def download_m3u():
     m3u_content = "#EXTM3U\n"
     for name, link in channels:
         m3u_content += f"#EXTINF:-1,{name}\n{link}\n"
-    return Response(m3u_content, mimetype="audio/x-mpegurl", headers={"Content-Disposition": "attachment; filename=canali_italiani.m3u"})
+    return Response(m3u_content, mimetype="application/x-mpegURL",
+                    headers={"Content-Disposition": "attachment;filename=canali.m3u"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=9999)
