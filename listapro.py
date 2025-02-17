@@ -115,8 +115,8 @@ HTML_TEMPLATE = """
       <!-- Nome del canale cliccabile (apre il link originale) -->
       <a href="{{ link }}" target="_blank" class="channel-name">{{ name }}</a>
       <div class="icons">
-        <!-- Icona ▶️ guarda qui: il link sostituisce il prefisso https:// con vlc:// o mpv:// -->
-        <span onclick="window.location.href='intent://{{ link | replace('https://', '') }}#Intent;package=com.javideoplayer.mpv;end;'">▶️ guarda qui</span>
+        <!-- Icona ▶️ guarda qui: apre direttamente il link nel browser -->
+        <span onclick="window.location.href='{{ link }}'" title="Guarda direttamente">▶️ guarda qui</span>
         <!-- Icona 🚧 VLC: il link sostituisce il prefisso https:// con vlc:// -->
         <span onclick="window.location.href='vlc://{{ link | replace('https://', '') }}'" title="Apri con VLC">🚧 VLC</span>
         <!-- Icona 🎦 MPV: il link sostituisce il prefisso https:// con mpv:// -->
