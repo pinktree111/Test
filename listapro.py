@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, Response
 import requests
 
 app = Flask(__name__)
@@ -27,6 +27,7 @@ HTML_TEMPLATE = """
       color: #777;
       display: none;
       margin-top: 10px;
+      margin-bottom: 20px; /* Aumentato spazio sotto il messaggio */
       line-height: 1.4;
       max-width: 600px;
       margin-left: auto;
@@ -44,6 +45,21 @@ HTML_TEMPLATE = """
     }
     .toggle-note:hover {
       opacity: 0.8;
+    }
+    .download-button {
+      display: block;
+      width: 200px;
+      margin: 0 auto 20px;
+      padding: 10px;
+      text-align: center;
+      background-color: #007BFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .download-button:hover {
+      background-color: #0056b3;
     }
     input[type="text"] {
       width: 100%;
@@ -149,6 +165,7 @@ HTML_TEMPLATE = """
     In caso cliccando non si apre direttamente il canale, provare a installare VLC e cliccare sulla sua icona. 
     Oppure clicca su "COPIA" e incolla il link nel tuo player preferito.
   </div>
+  <a class="download-button" href="/download">Scarica lista completa (M3U)</a>
   <input type="text" id="search" onkeyup="searchChannels()" placeholder="Cerca canale...">
   <ul>
     {% for name, link in channels %}
@@ -191,6 +208,14 @@ def get_italy_channels():
 def home():
     channels = get_italy_channels()
     return render_template_string(HTML_TEMPLATE, channels=channels)
+
+@app.route("/download")
+def download_m3u():
+    channels = get_italy_channels()
+    m3u_content = "#EXTM3U\n"
+    for name, link in channels:
+        m3u_content += f"#EXTINF:-1,{name}\n{link}\n"
+    return Response(m3u_content, mimetype="audio/x-mpegurl", headers={"Content-Disposition": "attachment; filename=canali_italiani.m3u"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=9999)
