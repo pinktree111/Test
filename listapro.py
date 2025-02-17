@@ -21,6 +21,30 @@ HTML_TEMPLATE = """
       text-align: center;
       color: #333;
     }
+    .note {
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+      display: none;
+      margin-top: 10px;
+      line-height: 1.4;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .toggle-note {
+      text-align: center;
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #D9534F;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .toggle-note:hover {
+      opacity: 0.8;
+    }
     input[type="text"] {
       width: 100%;
       padding: 10px;
@@ -107,24 +131,33 @@ HTML_TEMPLATE = """
         msgElement.style.display = 'none';
       }, 2000);
     }
+
+    function toggleNote() {
+      var note = document.getElementById('note');
+      if (note.style.display === 'none' || note.style.display === '') {
+        note.style.display = 'block';
+      } else {
+        note.style.display = 'none';
+      }
+    }
   </script>
 </head>
 <body>
   <h1>Canali Italiani</h1>
+  <a class="toggle-note" onclick="toggleNote()">🚨SE NON PARTE</a>
+  <div class="note" id="note">
+    In caso cliccando non si apre direttamente il canale, provare a installare VLC e cliccare sulla sua icona. 
+    Oppure clicca su "COPIA" e incolla il link nel tuo player preferito.
+  </div>
   <input type="text" id="search" onkeyup="searchChannels()" placeholder="Cerca canale...">
   <ul>
     {% for name, link in channels %}
     <li>
-      <!-- Nome del canale cliccabile (apre il link originale) -->
       <a href="{{ link }}" target="_blank" class="channel-name">{{ name }}</a>
       <div class="icons">
-        <!-- Label esplicativa -->
         <span class="icon-label">Apri:</span> 
-        <!-- ▶️ Apre direttamente il link nel browser -->
         <a href="{{ link }}" target="_blank" title="Guarda qui">Qui ▶️</a> |
-        <!-- 🎥 Apre con VLC usando il deeplink vlc:// -->
         <a href="vlc://{{ link | replace('https://', '') }}" title="Apri con VLC">VLC 🎥</a> |
-        <!-- 🖨️ Copia il link negli appunti -->
         <span onclick="copyToClipboard('{{ link }}', this.nextElementSibling)" title="Copia link">COPIA 🖨️</span>
         <span class="copy-msg">Copiato!</span>
       </div>
