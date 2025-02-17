@@ -27,7 +27,7 @@ HTML_TEMPLATE = """
       color: #777;
       display: none;
       margin-top: 10px;
-      margin-bottom: 20px; /* Aumentato spazio sotto il messaggio */
+      margin-bottom: 20px;
       line-height: 1.4;
       max-width: 600px;
       margin-left: auto;
@@ -36,7 +36,7 @@ HTML_TEMPLATE = """
     .toggle-note {
       text-align: center;
       display: block;
-      margin-top: 10px;
+      margin-top: 20px;
       font-size: 14px;
       color: #D9534F;
       cursor: pointer;
@@ -48,18 +48,19 @@ HTML_TEMPLATE = """
     }
     .download-button {
       display: block;
-      width: 200px;
-      margin: 0 auto 20px;
-      padding: 10px;
+      width: 100px;
+      margin: 0 auto 30px;
+      padding: 8px;
       text-align: center;
-      background-color: #007BFF;
+      background-color: #28a745;
       color: white;
       text-decoration: none;
       border-radius: 5px;
       font-weight: bold;
+      font-size: 16px;
     }
     .download-button:hover {
-      background-color: #0056b3;
+      background-color: #218838;
     }
     input[type="text"] {
       width: 100%;
@@ -160,12 +161,12 @@ HTML_TEMPLATE = """
 </head>
 <body>
   <h1>Canali Italiani</h1>
+  <a class="download-button" href="/download">💾m3u</a>
   <a class="toggle-note" onclick="toggleNote()">🚨SE NON PARTE</a>
   <div class="note" id="note">
     In caso cliccando non si apre direttamente il canale, provare a installare VLC e cliccare sulla sua icona. 
     Oppure clicca su "COPIA" e incolla il link nel tuo player preferito.
   </div>
-  <a class="download-button" href="/download">Scarica lista completa (M3U)</a>
   <input type="text" id="search" onkeyup="searchChannels()" placeholder="Cerca canale...">
   <ul>
     {% for name, link in channels %}
