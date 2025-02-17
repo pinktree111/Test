@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template_string
 import requests
 import json
@@ -8,7 +7,7 @@ app = Flask(__name__)
 # URL del JSON da cui scaricare i dati
 JSON_URL = "https://vavoo.to/channels"
 
-# Template HTML con motore di ricerca in JavaScript e funzionalità aggiuntive
+# Template HTML aggiornato con icona di copia link
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="it">
@@ -41,6 +40,7 @@ HTML_TEMPLATE = """
             justify-content: center;
         }
         .grid-item {
+            position: relative;
             background: #fff;
             width: calc(50% - 10px);
             padding: 15px;
@@ -50,28 +50,26 @@ HTML_TEMPLATE = """
             text-align: center;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
         }
         .grid-item a {
             text-decoration: none;
             color: #007BFF;
             font-size: 18px;
-            margin-bottom: 10px;
         }
         .grid-item a:hover {
             text-decoration: underline;
         }
-        .grid-item button {
-            padding: 5px 10px;
-            background: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
+        .copy-icon {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: #666;
             cursor: pointer;
-            font-size: 14px;
         }
-        .grid-item button:hover {
-            background: #0056b3;
+        .copy-icon:hover {
+            color: #333;
         }
         @media (min-width: 600px) {
             .grid-item {
@@ -109,7 +107,7 @@ HTML_TEMPLATE = """
         {% for name, link in channels %}
         <div class="grid-item">
             <a href="{{ link }}" target="_blank">{{ name }}</a>
-            <button onclick="copyToClipboard('{{ link }}')">Copia Link</button>
+            <span class="copy-icon" onclick="copyToClipboard('{{ link }}')">📋</span>
         </div>
         {% endfor %}
     </div>
