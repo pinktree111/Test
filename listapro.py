@@ -7,164 +7,147 @@ app = Flask(__name__)
 # URL del JSON da cui scaricare i dati
 JSON_URL = "https://vavoo.to/channels"
 
-# Template HTML aggiornato per la copia negli appunti
+# Template HTML con una lista di canali
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canali Italiani</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            padding: 20px;
-            background-color: #f4f4f9;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-size: 18px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-        .grid-item {
-            position: relative;
-            background: #fff;
-            width: calc(50% - 10px);
-            padding: 15px;
-            box-sizing: border-box;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .grid-item a {
-            text-decoration: none;
-            color: #007BFF;
-            font-size: 18px;
-        }
-        .grid-item a:hover {
-            text-decoration: underline;
-        }
-        .copy-icon {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            font-size: 20px;
-            color: #666;
-            cursor: pointer;
-        }
-        .copy-icon:hover {
-            color: #333;
-        }
-        .copy-msg {
-            position: absolute;
-            bottom: 40px;
-            left: 10px;
-            background: #333;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            display: none;
-        }
-        @media (min-width: 600px) {
-            .grid-item {
-                width: calc(33.33% - 10px);
-            }
-        }
-    </style>
-    <script>
-        function searchChannels() {
-            var input = document.getElementById('search').value.toLowerCase();
-            var items = document.querySelectorAll('.grid-item');
-            items.forEach(function(item) {
-                var text = item.innerText.toLowerCase();
-                if (text.includes(input)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canali Italiani</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .channel-name {
+      font-size: 18px;
+      color: #007BFF;
+      text-decoration: none;
+    }
+    .channel-name:hover {
+      text-decoration: underline;
+    }
+    .icons {
+      margin-top: 10px;
+    }
+    .icons a, .icons span {
+      margin-right: 15px;
+      font-size: 16px;
+      text-decoration: none;
+      cursor: pointer;
+      color: #555;
+    }
+    .icons a:hover, .icons span:hover {
+      opacity: 0.8;
+    }
+    .copy-msg {
+      display: none;
+      font-size: 12px;
+      color: #333;
+    }
+  </style>
+  <script>
+    function searchChannels() {
+      var input = document.getElementById('search').value.toLowerCase();
+      var items = document.querySelectorAll('ul li');
+      items.forEach(function(item) {
+        var text = item.innerText.toLowerCase();
+        item.style.display = text.includes(input) ? 'block' : 'none';
+      });
+    }
 
-        function copyToClipboard(link, msgElement) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(link).then(function() {
-                    showCopyMessage(msgElement);
-                }).catch(function(err) {
-                    console.error("Errore: ", err);
-                });
-            } else {
-                // Fallback per browser più vecchi
-                var tempInput = document.createElement("input");
-                tempInput.value = link;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand("copy");
-                document.body.removeChild(tempInput);
-                showCopyMessage(msgElement);
-            }
-        }
+    function copyToClipboard(link, msgElement) {
+      if(navigator.clipboard) {
+        navigator.clipboard.writeText(link).then(function() {
+          showCopyMessage(msgElement);
+        }).catch(function(err) {
+          console.error('Errore nel copiare: ', err);
+        });
+      } else {
+        var tempInput = document.createElement('input');
+        tempInput.value = link;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        showCopyMessage(msgElement);
+      }
+    }
 
-        function showCopyMessage(msgElement) {
-            msgElement.style.display = "block";
-            setTimeout(function() {
-                msgElement.style.display = "none";
-            }, 2000);
-        }
-    </script>
+    function showCopyMessage(msgElement) {
+      msgElement.style.display = 'inline';
+      setTimeout(function() {
+        msgElement.style.display = 'none';
+      }, 2000);
+    }
+  </script>
 </head>
 <body>
-    <h1>Canali Italiani</h1>
-    <input type="text" id="search" onkeyup="searchChannels()" placeholder="Cerca canale...">
-    <div class="grid">
-        {% for name, link in channels %}
-        <div class="grid-item">
-            <a href="{{ link }}" target="_blank">{{ name }}</a>
-            <span class="copy-icon" onclick="copyToClipboard('{{ link }}', this.nextElementSibling)">📋</span>
-            <div class="copy-msg">Copiato!</div>
-        </div>
-        {% endfor %}
-    </div>
+  <h1>Canali Italiani</h1>
+  <input type="text" id="search" onkeyup="searchChannels()" placeholder="Cerca canale...">
+  <ul>
+    {% for name, link in channels %}
+    <li>
+      <!-- Nome del canale cliccabile (apre il link originale) -->
+      <a href="{{ link }}" target="_blank" class="channel-name">{{ name }}</a>
+      <div class="icons">
+        <!-- Icona VLC: il link sostituisce il prefisso https:// con vlc:// -->
+        <a href="vlc://{{ link | replace('https://', '') }}" title="Apri con VLC">VLC</a>
+        <!-- Icona MPV: il link sostituisce il prefisso https:// con mpv:// -->
+        <a href="mpv://{{ link | replace('https://', '') }}" title="Apri con MPV">MPV</a>
+        <!-- Icona copia: esegue la copia tramite JavaScript -->
+        <span onclick="copyToClipboard('{{ link }}', this.nextElementSibling)" title="Copia link">📋</span>
+        <span class="copy-msg">Copiato!</span>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
 </body>
 </html>
 """
 
 def get_italy_channels():
     try:
-        # Scarica il contenuto del file JSON
         response = requests.get(JSON_URL)
         response.raise_for_status()
         data = response.json()
     except requests.exceptions.RequestException as e:
-        print(f"Errore nel download del file JSON: {e}")
+        print(f"Errore nel download del JSON: {e}")
         return []
 
-    # Filtra i canali con country "Italy"
     channels = []
     for item in data:
         if item.get("country") == "Italy":
             name = item.get("name", "Sconosciuto")
             id_value = item.get("id")
             if id_value:
+                # Costruisco il link originale
                 link = f"https://vavoo.to/play/{id_value}/index.m3u8"
                 channels.append((name, link))
-
     return channels
 
 @app.route("/")
@@ -173,4 +156,4 @@ def home():
     return render_template_string(HTML_TEMPLATE, channels=channels)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8191)
+    app.run(host="0.0.0.0", port=9999)
