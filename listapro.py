@@ -49,10 +49,10 @@ HTML_TEMPLATE = """
       text-decoration: underline;
     }
     .icons {
-      margin-top: 10px;
+      margin-top: 5px;
     }
     .icons a, .icons span {
-      margin-right: 15px;
+      margin-right: 10px;
       font-size: 20px;
       text-decoration: none;
       cursor: pointer;
@@ -65,6 +65,12 @@ HTML_TEMPLATE = """
       display: none;
       font-size: 12px;
       color: #333;
+    }
+    .icon-label {
+      font-size: 14px;
+      color: #333;
+      margin-right: 5px;
+      font-weight: bold;
     }
   </style>
   <script>
@@ -112,12 +118,14 @@ HTML_TEMPLATE = """
       <!-- Nome del canale cliccabile (apre il link originale) -->
       <a href="{{ link }}" target="_blank" class="channel-name">{{ name }}</a>
       <div class="icons">
+        <!-- Label esplicativa -->
+        <span class="icon-label">Apri:</span> 
         <!-- ▶️ Apre direttamente il link nel browser -->
-        <a href="{{ link }}" target="_blank" title="Guarda qui">▶️</a>
+        <a href="{{ link }}" target="_blank" title="Guarda qui">Qui ▶️</a> |
         <!-- 🎥 Apre con VLC usando il deeplink vlc:// -->
-        <a href="vlc://{{ link | replace('https://', '') }}" title="Apri con VLC">🎥</a>
+        <a href="vlc://{{ link | replace('https://', '') }}" title="Apri con VLC">VLC 🎥</a> |
         <!-- 🖨️ Copia il link negli appunti -->
-        <span onclick="copyToClipboard('{{ link }}', this.nextElementSibling)" title="Copia link">🖨️</span>
+        <span onclick="copyToClipboard('{{ link }}', this.nextElementSibling)" title="Copia link">COPIA 🖨️</span>
         <span class="copy-msg">Copiato!</span>
       </div>
     </li>
